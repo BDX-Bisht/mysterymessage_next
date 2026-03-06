@@ -18,7 +18,7 @@ export async function sendVerificationEmail(
         if (error) {
             return {
                 success: false,
-                message: "failed to send verificaion email",
+                message: `failed to send verificaion email ${JSON.stringify(error)}`,
             };
         }
 
