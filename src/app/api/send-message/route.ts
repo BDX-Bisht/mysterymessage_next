@@ -19,6 +19,7 @@ export async function POST(req: Request) {
             );
         }
 
+        // Is user accpeting the messages
         if (!user.isAcceptingMessage) {
             return Response.json(
                 {
