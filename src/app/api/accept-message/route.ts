@@ -94,7 +94,7 @@ export async function GET(req: Request) {
         return Response.json(
             {
                 status: true,
-                isAccptingMessages: foundUser.isAcceptingMessage,
+                isAcceptingMessage: foundUser.isAcceptingMessage,
             },
             { status: 200 },
         );

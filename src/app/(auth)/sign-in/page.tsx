@@ -1,16 +1,15 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { signInSchema } from "@/schemas/signInSchema";
-import { ApiResponse } from "@/types/ApiResponse";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios, { AxiosError } from "axios";
 import { Loader2 } from "lucide-react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
@@ -36,20 +35,22 @@ const page = () => {
             password: data.password,
         });
         if (result?.error) {
+            setIsSubmitting(false);
             toast.error("Signin failed", {
                 description: "Incorrect username or password",
             });
         }
 
         if (result?.url) {
+            toast.success("Login Successfully", { description: "Welcome" });
             router.replace("/dashboard");
         }
     };
 
     return (
         <>
-            <div className="flex justify-center items-center min-h-screen bg-gray-100">
-                <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
+            <div className="flex justify-center items-center min-h-screen bg-background">
+                <Card className="w-full max-w-md p-8 space-y-8 rounded-lg shadow-md">
                     <div className="text-center">
                         <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
                             Login Mystery Messages
@@ -138,7 +139,7 @@ const page = () => {
                             </Link>
                         </p>
                     </div>
-                </div>
+                </Card>
             </div>
         </>
     );

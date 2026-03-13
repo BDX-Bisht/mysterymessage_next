@@ -1,11 +1,14 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]/options";
+import { authOptions } from "../../auth/[...nextauth]/options";
 import dbConnect from "@/lib/dbConnect";
-import UserModel from "@/model/User";
 import { User } from "next-auth";
-import mongoose from "mongoose";
+import UserModel from "@/model/User";
 
-export async function GET(req: Request) {
+export async function DELETE(
+    req: Request,
+    { params }: { params: { messageId: string } },
+) {
+    const { messageId } = params;
     await dbConnect();
 
     const session = await getServerSession(authOptions);
@@ -21,38 +24,35 @@ export async function GET(req: Request) {
         );
     }
 
-    const userId = new mongoose.Types.ObjectId(user._id);
-
     try {
-        const user = await UserModel.aggregate([
-            { $match: { id: userId } },
-            { $unwind: "$messages" },
-            { $sort: { "messages.createdAt": -1 } },
-            { $group: { _id: "$_id", messages: { $push: "$messages" } } },
-        ]);
+        const updatedResult = await UserModel.updateOne(
+            { _id: user._id },
+            { $pull: { messages: { _id: messageId } } },
+        );
 
-        if (!user || user.length === 0) {
+        if (updatedResult.modifiedCount == 0) {
             return Response.json(
                 {
                     success: false,
-                    message: "Messages not found",
+                    message: "Message not found or already deleted",
                 },
                 { status: 401 },
             );
         }
+
         return Response.json(
             {
                 success: true,
-                messages: user[0].messages,
+                message: "Message deleted successfully",
             },
             { status: 200 },
         );
     } catch (error) {
-        console.log("error in getting messages");
+        console.log("Error in delete message", error);
         return Response.json(
             {
                 success: false,
-                message: "error in getting messages",
+                message: "Error in delete message",
             },
             { status: 500 },
         );
