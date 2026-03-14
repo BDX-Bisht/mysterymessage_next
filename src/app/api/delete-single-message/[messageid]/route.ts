@@ -2,11 +2,11 @@ import { getServerSession } from "next-auth";
 import dbConnect from "@/lib/dbConnect";
 import { User } from "next-auth";
 import UserModel from "@/model/User";
-import { NextApiRequest } from "next";
+import { NextRequest } from "next/server";
 import { authOptions } from "../../auth/[...nextauth]/options";
 
 export async function DELETE(
-    req: NextApiRequest,
+    req: NextRequest,
     { params }: { params: { messageid: string } },
 ) {
     const { messageid } = await params;
