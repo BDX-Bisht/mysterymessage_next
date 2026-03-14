@@ -27,8 +27,6 @@ import z from "zod";
 const page = () => {
     const [isSending, setIsSending] = useState(false);
     const [isSuggesting, setIsSuggesting] = useState(false);
-    const [aiMessage, setAiMessage] = useState("");
-    const [getAiMessages, setGetAiMessages] = useState([]);
     const { username } = useParams<{ username: string }>();
 
     const { setValue, handleSubmit, control } = useForm<
@@ -66,7 +64,7 @@ const page = () => {
                 { username, content: data.content },
             );
             toast.success("Send", { description: response.data.message });
-            setAiMessage("");
+            setValue("content", "");
         } catch (error) {
             console.error("error in signup of user", error);
             const axiosError = error as AxiosError<ApiResponse>;

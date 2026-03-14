@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import {
     Field,
     FieldError,
@@ -56,8 +57,8 @@ const page = () => {
 
     return (
         <div>
-            <div className="flex justify-center items-center min-h-screen bg-gray-100">
-                <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
+            <div className="flex justify-center items-center min-h-screen">
+                <Card className="w-full max-w-md p-8 space-y-8 rounded-lg shadow-md">
                     <div className="text-center">
                         <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
                             Verify Your Account
@@ -131,7 +132,7 @@ const page = () => {
                             </Field>
                         </FieldGroup>
                     </form>
-                </div>
+                </Card>
             </div>
         </div>
     );

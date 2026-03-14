@@ -71,12 +71,12 @@ const page = () => {
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
                                         <FieldLabel htmlFor="identifier">
-                                            Email
+                                            Email / Username
                                         </FieldLabel>
                                         <Input
                                             {...field}
                                             name="identifier"
-                                            type="email"
+                                            type="text"
                                             placeholder="Enter email or username"
                                             aria-invalid={fieldState.invalid}
                                             autoComplete="off"
