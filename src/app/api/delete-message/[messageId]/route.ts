@@ -1,14 +1,15 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "../../auth/[...nextauth]/options";
 import dbConnect from "@/lib/dbConnect";
 import { User } from "next-auth";
 import UserModel from "@/model/User";
+import { NextApiRequest } from "next";
+import { authOptions } from "../../auth/[...nextauth]/options";
 
 export async function DELETE(
-    req: Request,
-    { params }: { params: { messageId: string } },
+    req: NextApiRequest,
+    { params }: { params: { messageid: string } },
 ) {
-    const { messageId } = params;
+    const { messageid } = await params;
     await dbConnect();
 
     const session = await getServerSession(authOptions);
@@ -24,10 +25,20 @@ export async function DELETE(
         );
     }
 
+    if (!messageid) {
+        return Response.json(
+            {
+                success: false,
+                message: "Message not found",
+            },
+            { status: 400 },
+        );
+    }
+
     try {
         const updatedResult = await UserModel.updateOne(
             { _id: user._id },
-            { $pull: { messages: { _id: messageId } } },
+            { $pull: { messages: { _id: messageid } } },
         );
 
         if (updatedResult.modifiedCount == 0) {
@@ -36,7 +47,7 @@ export async function DELETE(
                     success: false,
                     message: "Message not found or already deleted",
                 },
-                { status: 401 },
+                { status: 404 },
             );
         }
 
@@ -48,7 +59,7 @@ export async function DELETE(
             { status: 200 },
         );
     } catch (error) {
-        console.log("Error in delete message", error);
+        console.error("Error in delete message", error);
         return Response.json(
             {
                 success: false,

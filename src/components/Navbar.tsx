@@ -13,14 +13,17 @@ const Navbar = () => {
     return (
         <nav className="p-4 md:p-6 dark:bg-[#141414] shadow-md border-b-2">
             <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
-                <a className="text-3xl font-bold mb-4 md:mb-0" href="#">
+                <Link className="text-3xl font-bold mb-4 md:mb-0" href="/">
                     Mystery Message
-                </a>
+                </Link>
                 {session ? (
                     <>
-                        <span className="text-base font-medium">
+                        <Link
+                            href="/dashboard"
+                            className="text-base font-medium"
+                        >
                             Welcome {user?.username || user?.email}
-                        </span>
+                        </Link>
                         <div className="flex items-center gap-3">
                             <ToggleTheme />
                             <Button

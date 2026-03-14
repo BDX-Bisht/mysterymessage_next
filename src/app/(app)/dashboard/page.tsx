@@ -3,6 +3,7 @@ import MessageCard from "@/components/MessageCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import { Message } from "@/model/User";
 import { acceptMessageSchema } from "@/schemas/acceptMessageSchema";
@@ -22,7 +23,7 @@ const page = () => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isSwitchLoading, setIsSwitchLoading] = useState(false);
-    const [isCopied, setIsCopied] = useState(false)
+    const [isCopied, setIsCopied] = useState(false);
     const [copiedText, copyToClipboard] = useCopyToClipboard();
 
     const handleDeleteMessage = async (messageid: string) => {
@@ -43,10 +44,10 @@ const page = () => {
     const copyBtn = () => {
         copyToClipboard(profileUrl)
             .then(() => {
-                setIsCopied(true)
+                setIsCopied(true);
                 toast.success("Copy to clipboard");
                 setTimeout(() => {
-                    setIsCopied(false)
+                    setIsCopied(false);
                 }, 1000);
             })
             .catch(() => {
@@ -80,44 +81,37 @@ const page = () => {
         }
     }, [setValue]);
 
-    const fetchMessages = useCallback(
-        async (refresh: boolean = false) => {
-            setIsLoading(true);
-            setIsSwitchLoading(true);
-            try {
-                const response =
-                    await axios.get<ApiResponse>("api/get-messages");
-                setMessages(response.data.messages || []);
-                if (refresh) {
-                    toast.success("Refreshed Messages", {
-                        description: "Showing latest messages",
-                    });
-                }
-            } catch (error) {
-                const axiosError = error as AxiosError<ApiResponse>;
-                if (refresh) {
-                    toast.error("Error", {
-                        description:
-                            axiosError.response?.data.message ||
-                            "Failed to fetch message",
-                    });
-                }
-            } finally {
-                setIsLoading(false);
-                setIsSwitchLoading(false);
+    const fetchMessages = useCallback(async (refresh: boolean = false) => {
+        setIsLoading(true);
+        setIsSwitchLoading(true);
+        try {
+            const response = await axios.get<ApiResponse>("api/get-messages");
+            setMessages(response.data.messages || []);
+            if (refresh) {
+                toast.success("Refreshed Messages", {
+                    description: "Showing latest messages",
+                });
             }
-        },
-        [messages, setIsLoading],
-    );
+        } catch (error) {
+            const axiosError = error as AxiosError<ApiResponse>;
+            if (refresh) {
+                toast.error("Error", {
+                    description:
+                        axiosError.response?.data.message ||
+                        "Failed to fetch message",
+                });
+            }
+        } finally {
+            setIsLoading(false);
+            setIsSwitchLoading(false);
+        }
+    }, []);
 
     useEffect(() => {
         if (!session || !session.user) return;
-    }, [session]);
-
-    useEffect(() => {
         fetchMessages();
         fetchAcceptMessage();
-    }, [setValue, fetchAcceptMessage, fetchMessages]);
+    }, [session?.user, fetchMessages, fetchAcceptMessage]);
 
     const handleSwitchMessage = async () => {
         try {
@@ -140,7 +134,20 @@ const page = () => {
     };
 
     if (!session || !session.user) {
-        return <div>Please Login</div>;
+        return (
+            <div className="my-8 mx-4 md:mx-8 lg:mx-auto p-6 rounded w-full max-w-7xl">
+                <div className="flex flex-col gap-3">
+                    {Array(10)
+                        .fill(0)
+                        .map((_, key) => (
+                            <Skeleton
+                                key={key + 1}
+                                className="h-10 w-full rounded-md"
+                            />
+                        ))}
+                </div>
+            </div>
+        );
     }
 
     return (
@@ -157,10 +164,12 @@ const page = () => {
                         disabled
                         className="w-full p-2 mr-2"
                     />
-                    <Button onClick={copyBtn}>{isCopied ? "Copied" : "Copy"}</Button>
+                    <Button onClick={copyBtn}>
+                        {isCopied ? "Copied" : "Copy"}
+                    </Button>
                 </div>
             </div>
-            <div className="mb-4 flex items-center">
+            <div className="flex items-center">
                 <Switch
                     {...register("acceptMessage")}
                     checked={acceptMessages}
@@ -171,9 +180,9 @@ const page = () => {
                     Accept Messages : {acceptMessages ? "On" : "Off"}
                 </span>
             </div>
-            <Separator />
+            <Separator className="my-6" />
             <Button
-                className="mt-4"
+                className=""
                 variant="outline"
                 onClick={(e) => {
                     e.preventDefault();
@@ -186,7 +195,7 @@ const page = () => {
                     <RefreshCcw className="h-4 w-4" />
                 )}
             </Button>
-            <div className="mt-4">
+            <div className="mt-4 grid grid-cols-3 gap-4">
                 {messages.length > 0 ? (
                     messages.map((msg, index) => (
                         <MessageCard
