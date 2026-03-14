@@ -122,7 +122,7 @@ The app leverages **Vercel AI SDK** with Google AI integration to provide:
 - `POST /api/send-message` - Send anonymous message
 - `GET /api/get-messages` - Retrieve user messages
 - `POST /api/accept-message` - Accept/reject messages
-- `DELETE /api/delete-message/[messageId]` - Delete a message
+- `DELETE /api/delete-single-message/[messageid]` - Delete a message
 - `GET /api/suggest-messages` - Get AI message suggestions
 - `GET /api/check-username-unique` - Check username availability
 
